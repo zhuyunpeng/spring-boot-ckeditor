@@ -1,5 +1,6 @@
 package com.example.ckeditortest.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +50,16 @@ public class IndexController {
                 response.setHeader("X-Frame-Options", "SAMEORIGIN");
 
                 String fileClientName = file.getOriginalFilename();
+                String fileFix = StringUtils.substring(fileClientName,
+                        fileClientName.lastIndexOf(".") + 1);
+                if (!StringUtils.equalsIgnoreCase(fileFix, "jpg")
+                        && !StringUtils.equalsIgnoreCase(fileFix, "jpeg")
+                        && !StringUtils.equalsIgnoreCase(fileFix, "bmp")
+                        && !StringUtils.equalsIgnoreCase(fileFix, "gif")
+                        && !StringUtils.equalsIgnoreCase(fileFix, "png")) {
+                    logger.error("Incorrect format of the uploading file -- " + fileFix);
+                    return;
+                }
                 String pathName = ckeditorStorageImagePath + fileClientName;
                 File newfile = new File(pathName);
                 byte[] bytes = file.getBytes();
@@ -61,7 +72,7 @@ public class IndexController {
 
                 // 将上传的图片的url返回给ckeditor
                 String callback = request.getParameter("CKEditorFuncNum");
-                logger.info("callback:{},fileUrl:{}",callback,fileUrl);
+                logger.info("callback:{},fileUrl:{}", callback, fileUrl);
                 PrintWriter out = response.getWriter();
                 String script = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + callback + ", '" + fileUrl + "');</script>";
 
