@@ -10,6 +10,13 @@ public class Event implements Serializable {
 
     private String name;
 
+    public Event(String name) {
+        this.name = name;
+    }
+
+    public Event() {
+    }
+
     public String getName() {
         return name;
     }
